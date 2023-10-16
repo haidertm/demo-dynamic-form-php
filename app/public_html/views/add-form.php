@@ -71,6 +71,24 @@ ob_start();  // Start output buffering
                 container.appendChild(newCard);
             }
 
+            function validateField(field) {
+                let isValid = true;
+                const value = field.value;
+                const regex = /[^a-zA-Z0-9 ]/g;  // For text input fields only
+
+                if (field.type === 'text' && (regex.test(value) || (field.required && value.trim() === ''))) {
+                    isValid = false;
+                    field.classList.add('is-invalid');
+                } else if (field.tagName.toLowerCase() === 'select' && (field.required && value.trim() === '')) {
+                    isValid = false;
+                    field.classList.add('is-invalid');
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+
+                return isValid;
+            }
+
             const form = document.getElementById('form-creation-form');
             form.addEventListener('submit', function (e) {
                 // Prevent from submitting
@@ -79,46 +97,56 @@ ob_start();  // Start output buffering
 
                 //Let's first validate all the text inputs.
                 // Iterate over all input fields
-                const inputFields = document.querySelectorAll('input[type="text"]');
+
                 let isValid = true;
 
-                // Only Allowing the Alphanumeric Characters
+                // Validate text input fields
+                const inputFields = document.querySelectorAll('input[type="text"]');
                 inputFields.forEach((field) => {
-                    const value = field.value;
-                    // Regular expression to match any non-alphanumeric characters
-                    const regex = /[^a-zA-Z0-9 ]/g;
+                    isValid = isValid && validateField(field);
+                });
 
-                    const feedbackElement = field.nextElementSibling;
-
-                    if (regex.test(value)) {
-                        isValid = false;
-                        field.classList.add('is-invalid');
-                    } else {
-                        field.classList.remove('is-invalid');
-                    }
+                // Validate select fields
+                const selectFields = document.querySelectorAll('select');
+                selectFields.forEach((field) => {
+                    isValid = isValid && validateField(field);
                 });
 
                 // Force form validation to refresh and show custom messages
                 form.classList.add('was-validated');
 
+                console.log('isValid', isValid);
 
-                const formData = new FormData(this);
+                if (isValid) {
 
-                // Log form data for debugging
-                formData.forEach((value, key) => {
-                    console.log(`${key}: ${value}`);
-                });
+                    const formData = new FormData(this);
 
-                console.log('FormData Would Be', formData);
-
-                fetch('/api/forms/create', {
-                    method: 'POST',
-                    body: formData
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        // ... handle response ...
+                    // Log form data for debugging
+                    formData.forEach((value, key) => {
+                        console.log(`${key}: ${value}`);
                     });
+
+                    console.log('FormData Would Be', formData);
+
+                    fetch('/api/forms/create', {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => response.json())
+                        .then(({success, data, message}) => {
+                            if (success === true) {
+                                // Storing message before redirection
+                                localStorage.setItem('successMessage', 'Form Successfully Generated.');
+                                if(data?.formID){
+                                    localStorage.setItem('newFormID', data.formID);
+                                }
+                                window.location.href = '<?= getBaseUrl() ?>/forms/list'
+                            }
+                        });
+                } else {
+                    console.log('Form is invalid. Not submitting.');
+                }
+
             });
 
     </script>

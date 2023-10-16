@@ -15,12 +15,17 @@ class Database {
 
     public function query($query, $params = []) {
         $stmt = $this->pdo->prepare($query);
+        if (!empty($params) && count($params) > 0) {
+            foreach ($params as $key => $value) {
+                $stmt->bindValue($key + 1, $value);
+            }
+        }
         $stmt->execute($params);
         return $stmt;
     }
 
     public function fetchAssoc($query, $params = []) {
-        $stmt = $this->query($query, $params = []);
+        $stmt = $this->query($query, $params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 

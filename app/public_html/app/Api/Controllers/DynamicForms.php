@@ -19,6 +19,35 @@ class DynamicForms extends Controller
         $this->render('add-form');
     }
 
+
+    public function preview(Request $request)
+    {
+        $formID = $request->getRouteParameter('formID');
+
+        $query = "SELECT fields.*, forms.name AS form_name
+              FROM fields
+              LEFT JOIN forms ON fields.form_id = forms.id
+              WHERE forms.id = :formId";
+
+        // Execute the query with the form ID as a named parameter
+        $fieldsList = $this->db->fetchAssoc($query, [':formId' => $formID]);
+
+        $pageTitle = 'Dynamic Form # '. $formID;
+
+        if (!empty($fieldsList)) {
+            $pageTitle = $fieldsList[0]['form_name'];
+        }
+
+        $data = [
+            'pageTitle' => $pageTitle,
+            'fields' => $fieldsList
+        ];
+
+        $this->render('view-entry', $data);
+    }
+
+
+
     public function list()
     {
         $this->render('list-forms');
@@ -63,10 +92,7 @@ class DynamicForms extends Controller
         foreach ($inputFields as $key => $field) {
             $fieldName = $field['field-name'];
             $fieldType = $field['field-type'] ?? 'Input';
-            $sendViaEmail = !!$field['send-via-email'] ? 1 : 0;
-
-
-            echo $sendViaEmail;
+            $sendViaEmail = isset($field['send-via-email']) ? 1 : 0;
             $fieldValidationRules = [
                 'required' => !!($field['is-required'] ?? false),
 //                Can have more validations in future when needed.
@@ -75,9 +101,16 @@ class DynamicForms extends Controller
             ];
             // Encode the validation rules to JSON
             $validationRulesJson = json_encode($fieldValidationRules);
-            $stmt = $this->db->query("INSERT INTO fields (form_id, field_name, field_type, validation_rules, send_via_email) VALUES (?, ?, ?,?,?)", [$formId, $fieldName, $fieldType, $validationRulesJson, $sendViaEmail]);
+            $stmt = $this->db->query("INSERT INTO fields (form_id, field_name, field_type, validation_rules, send_via_email) VALUES (?,?,?,?,?)", [$formId, $fieldName, $fieldType, $validationRulesJson, $sendViaEmail]);
         }
 
-        echo 'Form Data Store in database';
+        $this->jsonResponse(
+            $success = true,
+            $message = 'Form Successfully Generated',
+            $data = [
+                'formID' => $formId
+            ],
+            $statusCode = 200
+        );
     }
 }

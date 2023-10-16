@@ -6,6 +6,9 @@ $json = file_get_contents($fetchUrl);
 $entries = json_decode($json, true);
 ?>
     <p>Showing List of all the forms</p>
+    <div class="alert alert-success" role="alert" id="success-alert" style="display: none;">
+        A simple primary alert—check it out!
+    </div>
     <div class="table-responsive small">
         <table class="table table-striped table-sm">
             <thead>
@@ -43,9 +46,9 @@ $entries = json_decode($json, true);
                                 <?=$entry['updated_at']?>
                             </td>
                             <td>
-                                <button class="btn btn-sm btn-primary" type="button" onclick="addFieldV2()">
+                                <a href="/forms/preview/<?= $entry['id'] ?>" class="btn btn-sm btn-primary">
                                     Preview
-                                </button>
+                                </a>
                             </td>
                         </tr>
                     <?php
@@ -55,6 +58,36 @@ $entries = json_decode($json, true);
             </tbody>
         </table>
     </div>
+
+    <script type="text/javascript">
+        function clearLocalStorage() {
+            localStorage.removeItem('successMessage');
+            localStorage.removeItem('formId');
+        }
+
+        function previewBtn(formId) {
+            return `<a href="/forms/preview/${formId}" class="btn btn-sm btn-primary">
+                        Preview
+                    </a>`
+        }
+        const successMessage = localStorage.getItem('successMessage');
+        const formId = localStorage.getItem('newFormID');
+        if (successMessage) {
+            const alertBox = document.getElementById('success-alert');
+
+            if (formId) {
+                const prevBtn = previewBtn(formId);
+                alertBox.innerHTML = `${successMessage} - ${prevBtn}`
+            } else {
+                alertBox.innerHTML = successMessage
+            }
+
+            alertBox.style.display = 'block';
+
+            //Clear the LocalStorage
+            clearLocalStorage();
+        }
+    </script>
 
 
 <?php

@@ -43,17 +43,31 @@ class Router
         ];
     }
 
-
     public function route()
     {
+        $matchedRoute = null;
+        $matches = []; // Declare an empty $matches array
 
-        if (array_key_exists($this->requestMethod, $this->routes) && array_key_exists($this->uri, $this->routes[$this->requestMethod])) {
-            $route = $this->routes[$this->requestMethod][$this->uri];
-            $controllerName = $route['controller'];
-            $methodName = $route['method'];
+        foreach ($this->routes[$this->requestMethod] as $routePath => $routeInfo) {
+            $pattern = str_replace('/', '\/', $routePath);
+            $pattern = '#^' . preg_replace('/:(\w+)/', '(?<$1>[^\/]+)', $pattern) . '$#'; // Escape '/' character within the pattern
+
+            if (preg_match($pattern, $this->uri, $matches)) {
+                $matchedRoute = $routeInfo;
+                break;
+            }
+        }
+
+        if ($matchedRoute) {
+            $controllerName = $matchedRoute['controller'];
+            $methodName = $matchedRoute['method'];
             $controller = new $controllerName($this->db);
             // Create a new Request object
             $request = new Request();
+
+            // Pass route parameters to the Request object
+            $request->setRouteParameters($matches);
+
             $controller->$methodName($request);
         } else {
             echo json_encode(["status" => "route_not_found"]);

@@ -40,7 +40,7 @@ $router->get(
 $router->get(
     $path = '/forms/preview/:formID',
     $controller = DynamicForms::class,
-    $method = 'add'
+    $method = 'preview'
 );
 
 // Fetching Dynamic Component

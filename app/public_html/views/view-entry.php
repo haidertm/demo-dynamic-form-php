@@ -1,21 +1,44 @@
 <?php
-// Require header
-require_once __DIR__ . '/templates/header.php';
 
-// Fetch form metadata from the API
-$form_id = $_GET['id'];
-$form_meta = json_decode(file_get_contents('http://your-domain.com/api/view-entry?id=' . $form_id), true);
-
-// Generate and display form
-echo '<form id="dynamic-form">';
-foreach ($form_meta['fields'] as $field) {
-    // ... generate form fields based on field type ...
-}
-echo '<button type="submit">Submit</button>';
-echo '</form>';
-
-// Handle form submission via Ajax
+ob_start();  // Start output buffering
 ?>
+    <p class="lead">Following is dynamically generated</p>
+<div class="table-responsive small">
+
+    <div class="row justify-content-center">
+        <?php
+        if(!isset($data)) {
+            echo 'No Data Available';
+        } else { ?>
+
+            <form class="needs-validation" style="display: inline-block" id="form-creation-form" novalidate="">
+<!--                <div class="row g-3">-->
+                    <?php
+                    foreach ($data['fields'] as $key => $field):
+
+                        $fieldId = $field['id'];
+                        $fieldType = $field['field_type'];
+                        $fieldName = $field['field_name'];
+
+                    switch ($fieldType):
+                        case 'Text Area':
+                            include 'components/text_area.php';
+                            break;
+                        case 'Select':
+                            include 'components/select.php';
+                            break;
+                        default:
+                            echo 'Does not have any type';
+                    endswitch;
+
+                    endforeach ?>
+<!--                </div>-->
+            </form>
+
+        <?php } ?>
+    </div>
+</div>
+
 <script>
     document.getElementById('dynamic-form').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -31,6 +54,7 @@ echo '</form>';
     });
 </script>
 <?php
-// Require footer
-require_once __DIR__ . '/templates/footer.php';
+$pageTitle = $data['pageTitle'] ?? 'Dynamic Form';
+$content = ob_get_clean();  // Store buffered content into $content variable
+include 'layouts/default.php';  // Include the default layout
 ?>
