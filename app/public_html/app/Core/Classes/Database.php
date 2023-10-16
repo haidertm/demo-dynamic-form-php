@@ -17,7 +17,11 @@ class Database {
         $stmt = $this->pdo->prepare($query);
         if (!empty($params) && count($params) > 0) {
             foreach ($params as $key => $value) {
-                $stmt->bindValue($key + 1, $value);
+                if (gettype($key) !== 'string') {
+                    $stmt->bindValue($key + 1, $value);
+                } else {
+                    $stmt->bindValue($key, $value);
+                }
             }
         }
         $stmt->execute($params);
