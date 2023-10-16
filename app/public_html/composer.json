@@ -1,0 +1,16 @@
+{
+    "name": "haider/demo",
+    "description": "A demo project for test.",
+    "autoload": {
+        "files": ["helpers.php"],
+        "psr-4": {
+            "Haider\\Demo\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Syed Haider Hassan"
+        }
+    ],
+    "require": {}
+}

@@ -1,0 +1,37 @@
+version: '3.1'
+
+services:
+
+  php:
+    build:
+      context: .
+      dockerfile: ./docker/DockerFile
+    environment:
+      - XDEBUG_CONFIG=client_host=192.168.18.18
+      - PHP_IDE_CONFIG=serverName=docker
+    container_name: php-apache
+    volumes:
+      - ./public_html:/var/www/html
+    ports:
+      - "80:80"
+
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: mydb
+    ports:
+      - "3306:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: admin
+    ports:
+      - "9090:80"
+    depends_on:
+      - mysql
