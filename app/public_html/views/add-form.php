@@ -130,11 +130,11 @@ ob_start();  // Start output buffering
                 const formData = new FormData(this);
 
                 // Log form data for debugging
-                formData.forEach((value, key) => {
-                    console.log(`${key}: ${value}`);
-                });
+                // formData.forEach((value, key) => {
+                //     console.log(`${key}: ${value}`);
+                // });
 
-                console.log('FormData Would Be', formData);
+                // console.log('FormData Would Be', formData);
 
                 fetch('/api/forms/create', {
                     method: 'POST',

@@ -26,6 +26,7 @@ class Controller
             return $content;
         } else {
             // Handle the case where the view file doesn't exist
+            echo 'View not found';
             return 'View not found';
         }
     }
