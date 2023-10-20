@@ -50,6 +50,13 @@ $router->post(
     $method = 'dynamicFormInput'
 );
 
+// Fetching Dynamic Component
+$router->post(
+    $path = '/forms/template/add_forms/:slug',
+    $controller = DynamicForms::class,
+    $method = 'dynamicFormsSelectTemplate'
+);
+
 // Define routes for /api routes
 // Add Form to DB
 $router->post(

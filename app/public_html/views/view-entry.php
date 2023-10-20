@@ -3,36 +3,44 @@
 ob_start();  // Start output buffering
 ?>
     <p class="lead">Following is dynamically generated</p>
-<div class="table-responsive small">
+<div class="small">
 
     <div class="row justify-content-center">
         <?php
         if(!isset($data)) {
             echo 'No Data Available';
-        } else { ?>
-
-            <form class="needs-validation" style="display: inline-block" id="form-creation-form" novalidate="">
-<!--                <div class="row g-3">-->
+        } else {
+            ?>
+            <form class="col-md-8 needs-validation" style="display: inline-block" id="form-creation-form" novalidate="">
                     <?php
                     foreach ($data['fields'] as $key => $field):
 
                         $fieldId = $field['id'];
                         $fieldType = $field['field_type'];
                         $fieldName = $field['field_name'];
+                        $fieldOptions = $field['options'] ?? null;
 
-                    switch ($fieldType):
-                        case 'Text Area':
-                            include 'components/text_area.php';
-                            break;
-                        case 'Select':
-                            include 'components/select.php';
-                            break;
-                        default:
-                            echo 'Does not have any type';
-                    endswitch;
+                        switch ($fieldType):
+                            case 'input':
+                                include 'components/input.php';
+                                break;
+                            case 'text_area':
+                                include 'components/text_area.php';
+                                break;
+                            case 'select_option':
+                                include 'components/select.php';
+                                break;
+                            case 'radio':
+                                echo 'To work on radio template here';
+                                break;
+                            case 'checkbox':
+                                echo 'To work on checkbox template here';
+                                break;
+                            default:
+                                echo 'Does not have any type';
+                        endswitch;
 
                     endforeach ?>
-<!--                </div>-->
             </form>
 
         <?php } ?>

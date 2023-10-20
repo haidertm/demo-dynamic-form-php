@@ -13,7 +13,7 @@ $getFieldName = function($fieldLabel) use ($fieldCount) {
 
 <div class="card mt-3">
     <div class="card">
-        <div class="card-header">
+        <div class="card-header" data-id="<?= $fieldCount ?? 1 ?>">
             Field <?= $fieldCount ?? 1 ?>
         </div>
         <div class="card-body">
@@ -36,15 +36,17 @@ $getFieldName = function($fieldLabel) use ($fieldCount) {
                     <label for="<?=$getFieldId('field-type')?>" class="form-label">Field Type</label>
                     <select class="form-select" name="<?=$getFieldName('field-type')?>" id="<?=$getFieldId('field-type')?>" required>
                         <option value="">Select...</option>
-                        <option>Input</option>
-                        <option>Text Area</option>
-                        <option>Select</option>
-                        <option>Radio</option>
-                        <option>Checkbox</option>
+                        <option value="input">Input</option>
+                        <option value="text_area">Text Area</option>
+                        <option value="select_option">Select</option>
+                        <option value="radio">Radio</option>
+                        <option value="checkbox">Checkbox</option>
                     </select>
                 </div>
             </div>
-            <div class="row">
+            <div id="template_placeholder_<?= $fieldCount ?? 1 ?>" class="row mt-5" style="display: none;">
+            </div>
+            <div class="row mt-5">
                 <div class="col-md-6">
                     <div class="form-check">
                         <input type="checkbox" name="<?=$getFieldName('send-via-email')?>" class="form-check-input" id="<?=$getFieldId('send-via-email')?>">
@@ -59,7 +61,6 @@ $getFieldName = function($fieldLabel) use ($fieldCount) {
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

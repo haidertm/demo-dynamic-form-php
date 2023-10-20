@@ -5,7 +5,7 @@ namespace Haider\Demo\Api\Controllers;
 class Controller
 {
     // Common functionality for all controllers
-    public function render($viewName, $data = [])
+    protected function render($viewName, $data = [])
     {
         // Construct the full path to the view file
         $viewPath = __DIR__ . '/../../../views/' . $viewName . '.php';
